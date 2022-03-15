@@ -56,6 +56,8 @@ client.initialize();
 
 
 
+
+
 // Socket IO
 io.on('connection', function(socket){
     socket.emit('message', 'Connecting...');
