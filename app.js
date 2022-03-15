@@ -29,7 +29,18 @@ app.get('/', (req, res)=>{
 const client = new Client({
     authStrategy: new LegacySessionAuth({
         session: sessionCfg,
-        puppeteer: { headless: true }
+        puppeteer: {
+            headless: true,
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--disable-gpu'
+                ],
+        },
     })
 });
 
@@ -73,6 +84,30 @@ io.on('connection', function(socket){
         socket.emit('message', 'WHATSAPP CONNECTED'); 
     });
 });
+
+
+// Send Message
+app.post('/send-message', (req, res) =>{
+    const number = phoneNumberFormatter(req.body.number);
+    const message = req.body.message;
+
+    client
+    .sendMessage(number,message)
+    .then(response =>{
+        res.status(200).json({
+            status: true,
+            response:response
+        });
+    })
+    .catch(err =>{
+        res.status(500).json({
+            status: false,
+            response:err
+        });
+    });
+});
+
+
 
 server.listen((process.env.PORT || 5000), function(){
     console.log('App Running on http://localhost:'+ (process.env.PORT || 5000))
