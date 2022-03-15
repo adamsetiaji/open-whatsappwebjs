@@ -56,7 +56,6 @@ client.on('authenticated', (session) => {
 });
 
 
-
 client.on('message', msg => {
     if (msg.body == 'hi') {
         msg.reply('hello');
